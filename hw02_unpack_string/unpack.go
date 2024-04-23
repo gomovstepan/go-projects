@@ -10,7 +10,6 @@ import (
 var ErrInvalidString = errors.New("invalid string")
 
 func Unpack(stroka string) (string, error) {
-	var NewString strings.Builder
 	massive := []rune(stroka)
 	if len(massive) == 0 {
 		return "", nil
@@ -18,18 +17,27 @@ func Unpack(stroka string) (string, error) {
 	if _, err := strconv.Atoi(string(massive[0])); err == nil {
 		return "", ErrInvalidString
 	}
+	ResNewLine, err := Iteration(massive)
+	if err != nil {
+		return "", err
+	}
 
-	var previos string
+	return ResNewLine, nil
+}
+
+func Iteration(massive []rune) (string, error) {
+	var NewString strings.Builder
+	var previous string
 	var ecran bool
 	var skipDigitsRule bool
-	var previosDigit bool
+	var previousDigit bool
 
 	for i, val := range massive {
 		if string(val) == `\` && !ecran {
 			if i > 0 {
-				NewString.WriteString(previos)
+				NewString.WriteString(previous)
 			}
-			previos = ""
+			previous = ""
 			ecran = true
 			if i+1 == len(massive) {
 				return "", ErrInvalidString
@@ -40,31 +48,31 @@ func Unpack(stroka string) (string, error) {
 			if unicode.IsLetter(val) {
 				return "", ErrInvalidString
 			}
-			previos = string(val)
+			previous = string(val)
 			skipDigitsRule, ecran = true, false
 			if i+1 == len(massive) {
-				NewString.WriteString(previos)
+				NewString.WriteString(previous)
 			}
 			continue
 		}
 		if digit, err := strconv.Atoi(string(val)); err == nil {
-			if previosDigit && !skipDigitsRule {
+			if previousDigit && !skipDigitsRule {
 				return "", ErrInvalidString
 			} else {
-				NewString.WriteString(strings.Repeat(previos, digit))
-				skipDigitsRule, ecran, previosDigit = false, false, true
-				previos = ""
+				NewString.WriteString(strings.Repeat(previous, digit))
+				skipDigitsRule, ecran, previousDigit = false, false, true
+				previous = ""
 			}
 		} else {
 			if ecran {
 				return "", ErrInvalidString
 			}
-			NewString.WriteString(previos)
-			previosDigit, skipDigitsRule = false, false
-			previos = string(val)
+			NewString.WriteString(previous)
+			previousDigit, skipDigitsRule = false, false
+			previous = string(val)
 			ecran = false
 			if i+1 == len(massive) {
-				NewString.WriteString(previos)
+				NewString.WriteString(previous)
 			}
 			ecran = false
 		}
