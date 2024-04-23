@@ -58,11 +58,10 @@ func Iteration(massive []rune) (string, error) {
 		if digit, err := strconv.Atoi(string(val)); err == nil {
 			if previousDigit && !skipDigitsRule {
 				return "", ErrInvalidString
-			} else {
-				NewString.WriteString(strings.Repeat(previous, digit))
-				skipDigitsRule, ecran, previousDigit = false, false, true
-				previous = ""
 			}
+			NewString.WriteString(strings.Repeat(previous, digit))
+			skipDigitsRule, ecran, previousDigit = false, false, true
+			previous = ""
 		} else {
 			if ecran {
 				return "", ErrInvalidString
@@ -70,7 +69,6 @@ func Iteration(massive []rune) (string, error) {
 			NewString.WriteString(previous)
 			previousDigit, skipDigitsRule = false, false
 			previous = string(val)
-			ecran = false
 			if i+1 == len(massive) {
 				NewString.WriteString(previous)
 			}
