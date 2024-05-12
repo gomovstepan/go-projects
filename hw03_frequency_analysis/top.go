@@ -11,6 +11,8 @@ type WordCount struct {
 	Count int
 }
 
+const maxResuts = 10
+
 var re = regexp.MustCompile(`[:;!.,\s\"]+`)
 
 func Top10(text string) []string {
@@ -46,8 +48,8 @@ func Top10(text string) []string {
 	for _, word := range listWordsSort {
 		ListWordItog = append(ListWordItog, word.Word)
 	}
-	if len(ListWordItog) < 10 {
+	if len(ListWordItog) < maxResuts {
 		return ListWordItog
 	}
-	return ListWordItog[:10]
+	return ListWordItog[:maxResuts]
 }
